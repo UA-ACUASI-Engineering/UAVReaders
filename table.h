@@ -44,4 +44,5 @@ typedef struct {
 	char * name;
 	cMember * members;
 	uint16_t numMembers;
+	uint16_t mavType;
 } cStruct;

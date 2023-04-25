@@ -3,3 +3,6 @@
 _gen.c
 *_gen.c
 *_gen.h
+.#*
+/mavlink_definitions/
+/mavlinkreader

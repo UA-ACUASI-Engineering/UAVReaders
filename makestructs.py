@@ -33,7 +33,7 @@ class CStruct:
     static cMember members[] = {{
         {records}
     }};
-    static cStruct record = {{"{name}", members, {num_members}}};
+    static cStruct record = {{"{name}", members, {num_members}, {mav_type}}};
 
     mavlink_msg_{name}_decode(message, &parsed);
     return &record;
@@ -102,6 +102,7 @@ class CStruct:
             name=self.name,
             records=members,
             num_members=len(self.members),
+            mav_type=self.packet_id
         )
         decl = self.decl_template.format(name=self.name)
         return decl + body
