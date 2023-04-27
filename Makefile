@@ -1,10 +1,23 @@
 .phony: all clean
-.intermediate: mavlink_introspect_gen.c mavlink_introspect_gen.h *.o
 
-CFLAGS += -Wno-address-of-packed-member
+.ignore: clean
 
-all: mavlink_introspect_gen.o c_introspect.h main.cpp table.h
-	$(CXX) $(CFLAGS) --std=gnu++23 main.cpp *.o -o mavlinkreader
+.intermediate:
+
+CFLAGS += -Wno-address-of-packed-member -g
+LDFLAGS += -g
+
+all: bin/dataflashreader bin/mavlinkreader
+
+
+bin/dataflashreader: dataflashreader.cpp dataflash.o c_introspect.o
+	mkdir -p bin
+	$(CXX) $(CFLAGS) --std=gnu++23 $^ -o bin/dataflashreader
+
+
+bin/mavlinkreader: mavlinkreader.cpp mavlink_introspect_gen.o c_introspect.o
+	mkdir -p bin
+	$(CXX) $(CFLAGS) --std=gnu++23 $^ -o bin/mavlinkreader
 
 MAVLINK_DEFS := mavlink_definitions
 MAVLINK_VER := 2.0
@@ -25,10 +38,15 @@ mavlink_introspect_gen.c mavlink_introspect_gen.h &: mavlink/ makestructs.py
 	-r mavlink_introspect_gen.h \
 	-p mavlink_introspect_gen.c '{}' +
 
-#mavlink_introspect_gen.o: mavlink_introspect_gen.c mavlink_introspect_gen.h table.h
-#	$(CC) $(CFLAGS) -c mavlink_introspect_gen.c $@
+%.o: %.c %.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp %.h
+	$(CXX) $(CFLAGS) -c $< -o $@
 
 clean:
 	@rm -rf mavlink_definitions mavlink
-	@rm *_gen.*
+	@rm -rf *.o
 	@rm mavlinkreader
+	@rm dataflashreader
+	@rm *_gen.*

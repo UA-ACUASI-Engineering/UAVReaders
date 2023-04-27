@@ -1,27 +1,19 @@
-#include <cstddef>
-#include <cstdint>
 #include <string>
-#include <type_traits>
-#include <vector>
-#include <any>
-#include <format>
+#include<sstream>
 
-#include "table"
+#include "c_introspect.h"
 
-namespae introspect {
-	class abstractStructMember {
-	};
+namespace introspect {	
 
-	template <typename T>
-	class structMember<T>: abstractStructMember {
-		std::string name;
-		T * element;
-		size_t count;
-	};
-	
-	class CStruct{
-		std::string name;
-		std::vector<abstractStructMember> elements;
-	};
-	
+	std::string Struct::to_json() {
+		std::stringstream obj;
+		obj << "{\n";
+		obj << "    \"packet_name\": \"" << this->name << "\",\n    \"packet_id\": " << this->mavType;
+		for (auto i = this->elements.begin(); i != this->elements.end(); i++){
+			obj << ",\n";
+			obj << (*i)->to_json();
+		}
+		obj << "\n}\n";
+		return obj.str();
+	}
 }

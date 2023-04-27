@@ -8,6 +8,9 @@
 #include <vector>
 #include <any>
 
+#include <iostream>
+
+
 extern "C" {
 #include "table.h"
 }
@@ -25,6 +28,7 @@ namespace introspect {
 		virtual std::string& getName() = 0;
 		virtual size_t getNumElements() = 0;
 		virtual cType getTypeAsEnum() = 0;
+		virtual ~abstractStructMember() {};
 	};
 
 	template <typename T>
@@ -33,6 +37,7 @@ namespace introspect {
 		T* elements;
 		size_t count;
 		cType typeEnum;
+		bool allocated;
 	public:
 		using type = T;
 		structMember(const cMember member):
@@ -50,13 +55,11 @@ namespace introspect {
 
 		~structMember() {
 			delete[] elements;
-		}
-		
+			}
+
 		std::string& getName() {return this->name;}
 		size_t getNumElements() {return this->count;}
 		cType getTypeAsEnum() {return this->typeEnum;}
-		
-		
 	};
 	
 	class Struct: public abstractToJson{
@@ -64,6 +67,7 @@ namespace introspect {
 		std::vector<abstractStructMember*> elements;
 		int mavType;
 	public:
+		std::string& getName() {return name;}
 		Struct(const cStruct * s):
 			name(s->name),
 			mavType(s->mavType),
@@ -166,11 +170,19 @@ namespace introspect {
 					ref = new structMember<double>(cur);
 					elements.push_back(ref);
 					break;
+				case NONE:
+					throw "tried to instantiate empty template!";
+					break;
 				}
 			}
 		}
 
-		~Struct() {this->elements.clear();}
+		~Struct() {
+			for (auto i = this->elements.begin(); i != this->elements.end(); i++) {
+				delete (*i);
+			}
+			this->elements.clear();
+		}
 
 		std::string to_json();
 		
@@ -186,7 +198,7 @@ namespace introspect {
 		else if (this->count > 1 && this->typeEnum == CHAR ) {
 			stream << "\""  << std::to_string(*this->elements) << "\"";
 		}
-	    else {
+		else {
 		    stream <<  "[";
 			for (int i = 0; i < this->count; i++) {
 				if (i != 0) stream << ", ";
@@ -198,16 +210,5 @@ namespace introspect {
 	}
 	
 	
-	
-	std::string Struct::to_json() {
-		std::stringstream obj;
-		obj << "{\n";
-		obj << "    \"packet_name\": \"" << this->name << "\",\n    \"packet_id\": " << this->mavType;
-		for (auto i = this->elements.begin(); i != this->elements.end(); i++){
-			obj << ",\n";
-			obj << (*i)->to_json();
-		}
-		obj << "\n}\n";
-		return obj.str();
-	}
 }
+
