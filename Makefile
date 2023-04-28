@@ -1,14 +1,24 @@
-.phony: all clean
+.PHONY: all mavlink dataflash pypackage clean test
 
-.ignore: clean
+.IGNORE: clean
 
-.intermediate:
+.INTERMEDIATE: pyinterop.cpp mavlink_introspect_gen.c mavlink_introspect_gen.h pyinterop.cpp
+
+.SILENT: test
 
 CFLAGS += -Wno-address-of-packed-member -g
 LDFLAGS += -g
 
 all: bin/dataflashreader bin/mavlinkreader
 
+export CFLAGS
+export LDFLAGS
+pypackage pyinterop.cpp&: mavlink_introspect_gen.c mavlink_introspect_gen.h setup.py pyinterop.pyx
+	python setup.py build
+
+mavlink: bin/mavlinkreader
+
+dataflash: bin/dataflashreader
 
 bin/dataflashreader: dataflashreader.cpp dataflash.o c_introspect.o
 	mkdir -p bin
@@ -34,7 +44,10 @@ mavlink_introspect_gen.c mavlink_introspect_gen.h &: mavlink/ makestructs.py
 	-regex ".*mavlink_msg_.*\.h" \
 	-exec ./makestructs.py \
 	-r mavlink_introspect_gen.h \
-	-p mavlink_introspect_gen.c '{}' +
+	-p mavlink_introspect_gen.c '{}' + >/dev/null
+
+#pyinterop.cpp: pyinterop.pyx reader.h c_introspect.h mavlink/
+#	python setup.py build
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -48,4 +61,23 @@ clean:
 	@rm -rf bin
 	@rm -rf *_gen.c
 	@rm -rf *_gen.h
+	@rm -rf build
 
+test: bin/mavlinkreader
+	./bin/mavlinkreader <./test_data/mavlink_test.bin > __test_mav.out \
+	2>/dev/null
+	if cmp -s __test_mav.out ./test_data/mavlink_test.out ; then \
+	echo "MAVLINK_OK" ; \
+	else echo "MAVLINK BROKEN; DIFF SAVED" ; \
+	diff __test_mav.out ./test_data/mavlink_test.out ; \
+    fi
+	rm __test_mav.out
+
+	./bin/dataflashreader <./test_data/dataflash_test.bin > __test_DF.out \
+	2>/dev/null
+	if cmp -s __test_DF.out ./test_data/dataflash_test.out ; then \
+	echo "DATAFLASH_OK" ; \
+	else echo "DATAFLASH BROKEN; DIFF SAVED" ; \
+	diff __test_mav.out ./test_data/dataflash_test.out ; \
+    fi
+	rm __test_DF.out

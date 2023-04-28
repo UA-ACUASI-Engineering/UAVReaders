@@ -1,0 +1,32 @@
+[
+{
+    "packet_name": "heartbeat",
+    "packet_id": 0,
+    "custom_mode": 0,
+    "type": 13,
+    "autopilot": 3,
+    "base_mode": 81,
+    "system_status": 3,
+    "mavlink_version": 3
+}
+,
+{
+    "packet_name": "request_data_stream",
+    "packet_id": 66,
+    "req_message_rate": 2,
+    "target_system": 1,
+    "target_component": 1,
+    "req_stream_id": 2,
+    "start_stop": 1
+}
+,
+{
+    "packet_name": "request_data_stream",
+    "packet_id": 66,
+    "req_message_rate": 2,
+    "target_system": 1,
+    "target_component": 1,
+    "req_stream_id": 2,
+    "start_stop": 1
+}
+]

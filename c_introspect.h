@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstddef>
 #include <cstdint>
 #include <sstream>
@@ -6,6 +8,7 @@
 #include <cstring>
 #include <type_traits>
 #include <vector>
+#include <map>
 #include <any>
 
 #include <iostream>
@@ -28,6 +31,7 @@ namespace introspect {
 		virtual std::string& getName() = 0;
 		virtual size_t getNumElements() = 0;
 		virtual cType getTypeAsEnum() = 0;
+		virtual void* getInnerPointer() = 0;
 		virtual ~abstractStructMember() {};
 	};
 
@@ -37,7 +41,6 @@ namespace introspect {
 		T* elements;
 		size_t count;
 		cType typeEnum;
-		bool allocated;
 	public:
 		using type = T;
 		structMember(const cMember member):
@@ -60,6 +63,7 @@ namespace introspect {
 		std::string& getName() {return this->name;}
 		size_t getNumElements() {return this->count;}
 		cType getTypeAsEnum() {return this->typeEnum;}
+		void* getInnerPointer() {return (void*)this->elements;}
 	};
 	
 	class Struct: public abstractToJson{
@@ -67,7 +71,12 @@ namespace introspect {
 		std::vector<abstractStructMember*> elements;
 		int mavType;
 	public:
+		int getNumChildren() {return elements.size();}
+		int getType() {return mavType;}
 		std::string& getName() {return name;}
+		auto begin() {return elements.begin();}
+		auto end() {return elements.end();}
+		auto innerVector() {return elements;}
 		Struct(const cStruct * s):
 			name(s->name),
 			mavType(s->mavType),
@@ -200,15 +209,13 @@ namespace introspect {
 		}
 		else {
 		    stream <<  "[";
-			for (int i = 0; i < this->count; i++) {
+			for (size_t i = 0; i < this->count; i++) {
 				if (i != 0) stream << ", ";
 				stream << std::to_string(this->elements[i]);
 			}
 		    stream << "]";
 		}
 		return stream.str();
-	}
-	
-	
+	}	
 }
 

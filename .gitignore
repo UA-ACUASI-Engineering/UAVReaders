@@ -7,3 +7,4 @@ _gen.c
 /mavlink_definitions/
 /mavlinkreader
 /bin/
+/build/
