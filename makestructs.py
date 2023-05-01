@@ -1,4 +1,16 @@
 #!/usr/bin/env python3
+"""
+makestructs.py
+
+Contributors: Christian Clifford cjclifford@alaska.edu
+
+Reads Mavlink header files and generates static functions 
+returning cStruct structures  (see table.h).
+These structures are used by c_introspect functions
+to introspect into packets and determine what they contain.
+"""
+
+
 import argparse as args
 import regex as re
 import logging as lo

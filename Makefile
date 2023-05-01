@@ -2,11 +2,11 @@
 
 .IGNORE: clean
 
-.INTERMEDIATE: pyinterop.cpp mavlink_introspect_gen.c mavlink_introspect_gen.h pyinterop.cpp
+.INTERMEDIATE: pyinterop.cpp  pyinterop.cpp
 
 .SILENT: test
 
-CFLAGS += -Wno-address-of-packed-member -g
+CFLAGS += -Wall -Wno-address-of-packed-member -g
 LDFLAGS += -g
 
 all: bin/dataflashreader bin/mavlinkreader

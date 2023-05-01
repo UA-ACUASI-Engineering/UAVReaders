@@ -1,3 +1,11 @@
+/* dataflash.h
+ * dataflash reader
+ * This is a bit lower level than the reader classes
+ * in readers.h. Use those instead
+ * Implements a parser for the DataFlash UAV logging 
+ * format. 
+ *************************************************/
+
 #pragma once
 
 #include <cstdint>
@@ -47,12 +55,13 @@ namespace DataFlash{
 	public:
 		uint8_t packet_type;
 		DFFormatDescription(const DFDescriptionPacket &format):
-			description(),
-			packet_type(format.type),
 			name(),
-			copy(),
+			fields(),
+			length(format.len),
+			description(),
 			current(),
-			length(format.len) {
+			copy(),
+			packet_type(format.type) {
 			DFFormatDescription::initialize();
 			description.mavType = format.type;
 
@@ -81,7 +90,8 @@ namespace DataFlash{
 			long offset = 0;
 			for (int i = 0; i < description.numMembers; i++) {
 				char format_type = format.fmt_string[i];
-				description.members[i] = DFFormatDescription::dfMemberTypes[format_type];
+				description.members[i] =
+					DFFormatDescription::dfMemberTypes[(uint8_t)format_type];
 				description.members[i].name = fieldNames.front();
 				description.members[i].value = (void*)offset;
 				fieldNames.pop();
@@ -122,11 +132,11 @@ namespace DataFlash{
 
 	public:
 		DFParser():
+			packetLengths(),
 			headerCnt(0),
 			consumedCount(0),
 			totalSize(0),
 			isDescriptor(false),
-			packetLengths(),
 			formats(){
 			for (int i = 0; i < 256; i++) {
 				formats[i] = nullptr;

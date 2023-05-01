@@ -1,3 +1,12 @@
+/* readers.h
+ * Classes for easily reading things from MavLink and 
+ * DataFlash binary files
+ * 
+ * Contains UAVformatreaders::abstractReader ,
+ * UAVFormatreaders::dataFlashReader ,
+ * and UAVformatreaders::mavlinkreader
+ *************************************************/
+
 #include <cstdint>
 #include <queue>
 
@@ -14,8 +23,10 @@ extern "C"{
 namespace UAVFormatReaders {
 
 	class abstractReader {
+		/* Interface for packet Readers */
 		virtual void parseByte(const uint8_t) = 0;
 		virtual void parseBuffer(const uint8_t *, uint64_t) = 0;
+		virtual int numAvailable() = 0;
 		virtual int bytesSeen() = 0;
 		virtual int  packetsSeen() = 0;
 		virtual introspect::Struct* getPacket() = 0;
@@ -30,13 +41,12 @@ namespace UAVFormatReaders {
 		uint64_t numPackets;
 	public:
 		dataFlashReader():
+			parser(),
 			msg(),
+			results(),
 			hasData(false),
 			numBytes(0),
-			numPackets(0),
-			results(),
-			parser(){
-			
+			numPackets(0) {
 		}
 		void parseByte(const uint8_t);
 		void parseBuffer(const uint8_t *, uint64_t len);
@@ -46,6 +56,7 @@ namespace UAVFormatReaders {
 		introspect::Struct* getPacket();
 		
 	};
+
 
 	class mavLinkReader: public abstractReader {
 		static int channel;
@@ -63,8 +74,8 @@ namespace UAVFormatReaders {
 			msg(),
 			results(),
 			hasData(false),
-			numPackets(0),
-			numBytes(0) {
+			numBytes(0),
+			numPackets(0) {
 			mavLinkReader::channel++;
 		}
 		void parseByte(const uint8_t);

@@ -1,3 +1,17 @@
+/* c_introspect.h
+ * Classes for introspecting into binary data blobs
+ * using cStruct and friends (see table.h).
+ * Allows you to get an enum telling you the type of 
+ * each struct member, the name of the member, 
+ * and a void pointer to it. Get an introspect::struct 
+ * object by initializing it with a cStruct*.
+ * You can read information about the struct out
+ * after that. 
+ *
+ * Last, you can call `to_json()` on a Struct to 
+ * get a workable JSON representation of the Struct.
+ *************************************************/
+
 #pragma once
 
 #include <cstddef>
@@ -22,11 +36,13 @@ extern "C" {
 namespace introspect {
 
 	class abstractToJson {
+		/* Interface for things that can be turned into json */
 	public:
 		virtual std::string to_json() = 0;
 	};
 
 	class abstractStructMember: public abstractToJson {
+		/* Interface for members of Structs */
 	public:
 		virtual std::string& getName() = 0;
 		virtual size_t getNumElements() = 0;
@@ -37,6 +53,7 @@ namespace introspect {
 
 	template <typename T>
 	class structMember: public abstractStructMember{
+		/* Struct: An introspectable representation of a C struct */
 		std::string name;
 		T* elements;
 		size_t count;
@@ -47,8 +64,8 @@ namespace introspect {
 			abstractStructMember(),
 			name(member.name),
 			elements(),
-			typeEnum(member.type),
-			count(member.elements){
+			count(member.elements),
+			typeEnum(member.type){
 			this->count = member.elements;
 			this->elements = new T[this->count];
 			std::memcpy(elements, member.value, sizeof(T)*this->count);
@@ -73,14 +90,14 @@ namespace introspect {
 	public:
 		int getNumChildren() {return elements.size();}
 		int getType() {return mavType;}
-		std::string& getName() {return name;}
-		auto begin() {return elements.begin();}
-		auto end() {return elements.end();}
+		std::string& getName() {return this->name;}
+		auto begin() {return this->elements.begin();}
+		auto end() {return this->elements.end();}
 		auto innerVector() {return elements;}
 		Struct(const cStruct * s):
 			name(s->name),
-			mavType(s->mavType),
-			elements() {
+			elements(),
+			mavType(s->mavType){
 			for (int i = 0; i < s->numMembers; i++) {
 				cMember cur = (s->members[i]);
 				abstractStructMember * ref = nullptr;

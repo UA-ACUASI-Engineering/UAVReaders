@@ -23,7 +23,7 @@ namespace UAVFormatReaders {
 	}
 
 	void dataFlashReader::parseBuffer(const uint8_t * buf, uint64_t len) {
-		for (int i = 0; i < len; i++) {
+		for (uint64_t i = 0; i < len; i++) {
 		    this->parseByte(buf[i]);
 		}
 	}
@@ -58,7 +58,7 @@ namespace UAVFormatReaders {
 	}
 
 	void mavLinkReader::parseBuffer(const uint8_t * buf, uint64_t len){
-		for (int i = 0; i < len; i++) {
+		for (uint64_t i = 0; i < len; i++) {
 			this->parseByte(buf[i]);
 		}
 	}

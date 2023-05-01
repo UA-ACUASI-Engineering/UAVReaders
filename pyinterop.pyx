@@ -1,7 +1,30 @@
 # distutils: language=c++
+"""
+Pyinterop.pyx
+
+Contributors: Christian Clifford cjclifford@alaska.edu
+
+Cython wrappers and objects to allow using readers.h
+from Python.
+""" 
 
 from libcpp.string cimport string
 from libcpp.vector cimport vector
+
+
+import cython
+from libcpp.string cimport string
+
+cdef cppToPyStr(string cpp_string):
+    # Get a pointer to the underlying C string using the c_str() method
+    cdef const char* c_string_ptr = cpp_string.c_str()
+
+    # Convert the C string to a Python string by decoding the byte string using UTF-8 encoding
+    cdef bytes c_bytes = <bytes>c_string_ptr
+    a = c_bytes.decode('utf-8')
+    return a
+
+cimport libc.string
 
 #from libcpp cimport bool
 
@@ -65,19 +88,13 @@ cdef extern from "c_introspect.h" namespace "introspect":
         cType getTypeAsEnum()
         void* getInnerPointer()
 
-#    cdef cppclass abstractStructMember:
-#        string getName()
-#        int getNumElements()
-#        cType getTypeAsEnum()
-#        void* getInnerPointer()
-
     cdef cppclass struct:
         pass
 
     cdef cppclass Struct (abstractToJson):
         vector[abstractStructMember *] elements
         int getType()
-        string getName()
+        string& getName()
         int getNumChildren()
         Struct(cStruct *) except +
         vector[abstractStructMember*] innerVector()
@@ -106,64 +123,101 @@ cdef extern from "readers.h" namespace "UAVFormatReaders":
 
     void deleteStruct(Struct *)
 
-
-cdef object voidToPython(void* ptr, cType t):
+# Yes this is terrible; thank you for pointing it out.
+cdef object voidToPython(void* ptr, cType t, size_t num):
+    l = []
     if t == cType.BOOL:
-        return bool((<unsigned char*>ptr)[0])
+        for i in range(num):
+            l.append(bool((<unsigned char*>ptr)[i]))
     elif t == cType.CHAR:
-        return chr((<char*>ptr)[0])
+        for i in range(num):
+            l = ""
+            l = str(<char*>ptr, encoding="utf-8")
     elif t == cType.SIGNED_CHAR:
-        return int((<char*>ptr)[0])
+        for i in range(num):
+            l.append(int((<char*>ptr)[i]))
     elif t == cType.UNSIGNED_CHAR:
-        return int((<unsigned char*>ptr)[0])
+        for i in range(num):
+            l.append(int((<unsigned char*>ptr)[i]))
     elif t == cType.SHORT:
-        return int((<short*>ptr)[0])
+        for i in range(num):
+            l.append(int((<short*>ptr)[i]))
     elif t == cType.UNSIGNED_SHORT:
-        return int((<unsigned short*>ptr)[0])
+        for i in range(num):
+            l.append(int((<unsigned short*>ptr)[i]))
     elif t == cType.INT:
-        return int((<int*>ptr)[0])
+        for i in range(num):
+            l.append(int((<int*>ptr)[i]))
     elif t == cType.UNSIGNED_INT:
-        return int((<unsigned int*>ptr)[0])
+        for i in range(num):
+            l.append(int((<unsigned int*>ptr)[i]))
     elif t == cType.LONG:
-        return int((<long*>ptr)[0])
+        for i in range(num):
+            l.append(int((<long*>ptr)[i]))
     elif t == cType.UNSIGNED_LONG:
-        return int((<unsigned long*>ptr)[0])
+        for i in range(num):
+            l.append(int((<unsigned long*>ptr)[i]))
     elif t == cType.LONG_LONG:
-        return int((<long long*>ptr)[0])
+        for i in range(num):
+            l.append(int((<long long*>ptr)[i]))
     elif t == cType.UNSIGNED_LONG_LONG:
-        return int((<unsigned long long*>ptr)[0])
+        for i in range(num):
+            l.append(int((<unsigned long long*>ptr)[i]))
     elif t == cType.INT8_T:
-        return int((<int8_t*>ptr)[0])
+        for i in range(num):
+            l.append(int((<int8_t*>ptr)[i]))
     elif t == cType.UINT8_T:
-        return int((<uint8_t*>ptr)[0])
+        for i in range(num):
+            l.append(int((<uint8_t*>ptr)[i]))
     elif t == cType.INT16_T:
-        return int((<int16_t*>ptr)[0])
+        for i in range(num):
+            l.append(int((<int16_t*>ptr)[i]))
     elif t == cType.UINT16_T:
-        return int((<uint16_t*>ptr)[0])
+        for i in range(num):
+            l.append(int((<uint16_t*>ptr)[i]))
     elif t == cType.INT32_T:
-        return int((<int32_t*>ptr)[0])
+        for i in range(num):
+            l.append(int((<int32_t*>ptr)[i]))
     elif t == cType.UINT32_T:
-        return int((<uint32_t*>ptr)[0])
+        for i in range(num):
+            l.append(int((<uint32_t*>ptr)[i]))
     elif t == cType.INT64_T:
-        return int((<int64_t*>ptr)[0])
+        for i in range(num):
+            l.append(int((<int64_t*>ptr)[i]))
     elif t == cType.UINT64_T:
-        return int((<uint64_t*>ptr)[0])
+        for i in range(num):
+            l.append(int((<uint64_t*>ptr)[i]))
     elif t == cType.FLOAT:
-        return float((<float*>ptr)[0])
+        for i in range(num):
+            l.append(float((<float*>ptr)[i]))
     elif t == cType.DOUBLE:
-        return float((<double*>ptr)[0])
+        for i in range(num):
+            l.append(float((<double*>ptr)[i]))
+    if len(l) == 1:
+        return l[0]
     else:
-        return None
+        return l
 
 cdef tuple memberToPy(abstractStructMember* member):
     cdef cType t = member.getTypeAsEnum()
     cdef void * p = member.getInnerPointer()
-    cdef object pyObj = voidToPython(p, t)
-    cdef string name = member.getName()
+    cdef size_t num = member.getNumElements()
+    cdef object pyObj = voidToPython(p, t, num)
+    name = cppToPyStr(member.getName())
     return name, pyObj
 
-
 cdef class packet(dict):
+    """
+    A class representing a packet. 
+    Basically a dict, but with three additional properties:
+
+     - `.name` name of the packet
+     - `.packet_type` ID representing the type of packet within the 
+       context of the packet's source protocol
+     - `.protocol` The source protocol of the packet as a string
+
+    These packets are not meant to be created by users at this time.
+    """
     cdef string name
     cdef string protocol
     cdef int packet_type
@@ -182,16 +236,16 @@ cdef class packet(dict):
 
         self.protocol = proto
         self.packet_type = ptr.getType()
-        self.name = ptr.getName()
-        self["__name__"] = self.name
+        print("hi")
+        self["__name__"] = cppToPyStr(ptr.getName())
         self["__packet_type__"] = self.packet_type
-        self["__protocol__"] = proto
+        self["__protocol__"] = cppToPyStr(proto)
 
         deleteStruct(ptr)
 
     @property
-    def type(self):
-        return self.packet_type
+    def protocol(self):
+        return self.protocol
 
     @property
     def name(self):
@@ -200,34 +254,62 @@ cdef class packet(dict):
     @property
     def packet_type(self):
         return self.packet_type
-        
-cdef class data_flash_reader:
-    cdef dataFlashReader* reader
 
-    def __cinit__(self):
-        self.reader = new dataFlashReader()
+def thing_to_iterable(thing):
+    """
+    Converts certain python objects into
+    generators returning bytes.
+    Currently accepts strings contining filenames and
+    things that are already generator functions, not touching them.
 
-    def __dealloc__ (self):
-        del self.reader
+    Both readers use this internally, but it can be useful to have access to 
+    on its own.
 
-    def parseByte(self, const uint8_t byte):
-        self.reader.parseByte(byte)
+    :param thing: A python object to attemt to convert
+    """
+    if (callable(thing)):
+        return thing
+    elif type(thing) == str:
+        def readFile():
+            with open(thing, "rb") as f:
+                data = f.read(512)
+                while len(data) > 0:
+                    yield data
+                    data = f.read(512)
 
-    def parseBuffer(self, const uint8_t[:] bytes):
-        cdef uint64_t l = len(bytes)
-        self.reader.parseBuffer(&bytes[0], l)
-
-    def get_packet(self) -> packet:
-        cdef Struct* s = self.reader.getPacket()
-        cdef packet p = packet()
-        p.secret_real_init(s, "mavlink")
-        return p
+        return readFile
 
 cdef class mavlink_reader:
-    cdef mavLinkReader* reader
+    """
+    Parser for DataFlash .bin files.
+    
+    To use:
+     - Load UAVReaders
+     - create a MavlinkReader
+       by passing the initializer a string filname or a 
+       yielding function that returns bytes to parse
+     - Read from the Reader by calling it to obtain a 
+       generator.
+    
+    for example,
 
-    def __cinit__(self):
+
+    ```python
+    from UAVReaders import mavlinkReader as mlr
+    reader = mlr("file.tlog")
+    for packet in reader():
+        # do stuff
+    
+    # done!
+    ```
+    :param src: Source of bytes to parse; generator function or filename
+    """
+    cdef mavLinkReader* reader
+    cdef object gen
+
+    def __cinit__(self, src):
         self.reader = new mavLinkReader()
+        self.gen = thing_to_iterable(src)
 
     def __dealloc__ (self):
         del self.reader
@@ -240,10 +322,82 @@ cdef class mavlink_reader:
         self.reader.parseBuffer(&bytes[0], l)
 
     def get_packet(self) -> packet:
-        cdef Struct* s = self.reader.getPacket()
-        cdef packet p = packet()
-        p.secret_real_init(s, "mavlink")
-        return p
+        cdef int n = self.reader.numAvailable()
+        if (n > 0):
+            s = self.reader.getPacket()
+            p = packet()
+            p.secret_real_init(s, "mavlink")
+            return p
+        else:
+            return None
 
+    def __call__(self):
+        for thing in self.gen(): 
+            self.parseBuffer(thing)
+            while self.reader.numAvailable() > 0:
+                s = self.reader.getPacket()
+                p = packet()
+                p.secret_real_init(s, "mavlink")
+                yield p
+
+cdef class data_flash_reader:
+    """
+    Parser for DataFlash .bin files.
     
+    To use:
+     - Load UAVReaders
+     - create a dataFlashReader or MavlinkReader
+       by passing the initializer a string filname or a 
+       yielding function that returns bytes to parse
+     - Read from the Reader by calling it to obtain a 
+       generator.
     
+    for example,
+
+
+    ```python
+    from UAVReaders import dataFlashReader as dfr
+    reader = dfr("file.bin")
+    for packet in reader():
+        # do stuff
+    
+    # done!
+    ```
+    :param src: Source of bytes to parse; generator function or filename
+    """
+    cdef dataFlashReader* reader
+    cdef object gen
+
+    def __cinit__(self, src):
+        self.reader = new dataFlashReader()
+        self.gen = thing_to_iterable(src)
+
+    def __dealloc__ (self):
+        del self.reader
+
+    def parseByte(self, const uint8_t byte):
+        self.reader.parseByte(byte)
+
+    def parseBuffer(self, const uint8_t[:] bytes):
+        cdef uint64_t l = len(bytes)
+        self.reader.parseBuffer(&bytes[0], l)
+
+    def get_packet(self) -> packet:
+        cdef int n = self.reader.numAvailable()
+        if (n > 0):
+            s = self.reader.getPacket()
+            p = packet()
+            p.secret_real_init(s, "data_flash")
+            return p
+        else:
+            return None
+
+    def __call__(self):
+        for thing in self.gen():
+            self.parseBuffer(thing)
+            while self.reader.numAvailable() > 0:
+                s = self.reader.getPacket()
+                p = packet()
+                p.secret_real_init(s, "data_flash")
+                yield p
+
