@@ -3,7 +3,7 @@ Parsers for UAV-related formats like DataFlash and Mavlink
 
 ## Usage from Python
 
-Right now, as this module has not yet been uloaded to PyPI or anything like 
+Right now, as this module has not yet been uploaded to PyPI or anything like 
 that, usage is a bit more complicated (hopefully not too complicated, 
 though)! There are a few build-time dependencies that you need to install 
 before building the package.
@@ -13,6 +13,9 @@ before building the package.
  - A working Linux-ish C++ toolchain with `make`. GCC is what I have been 
    using. It should technically be possible to build natively on windows,
    but I would just use WSL.
+
+Now, you have to make sure that Git has pulled all the submodules this 
+project requires by running `git submodule update --init --recursive`.
 
 After that, just `cd` into the directory and run `make pypackage`. Import 
 `uavreaders.UAVReaders` to load it into your python. This provides access
@@ -60,6 +63,6 @@ almost always want to compress the output. A one-gigabyte DataFlash
 ## Testing
 
 Run `make test` to test the functionality of the DataFlash and Mavlink
-parsers. This compiles the commandline parsing utilities and compares
+parsers. This compiles the command-line parsing utilities and compares
 their output against a known-good state.
 

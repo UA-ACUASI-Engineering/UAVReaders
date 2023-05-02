@@ -30,12 +30,14 @@ bin/mavlinkreader: mavlinkreader.cpp mavlink_introspect_gen.o c_introspect.o
 	$(CXX) $(CFLAGS) --std=gnu++23 $^ -o bin/mavlinkreader
 
 MAVLINK_DEFS := mavlink_project
-PYMAVLINK := pymavlink
+PYMAVLINK := $(MAVLINK_DEFS)/pymavlink
 MAVLINK_VER := 2.0
 MAVLINK_SCHEMA := v1.0/all.xml
 
-export PYTHONPATH=$(shell pwd)/$(pymavlink)
+export PYTHONPATH=$(shell pwd)/$(MAVLINK_DEFS)
 mavlink/:
+	echo $(PYMAVLINK)
+	python -c "import os; print(os.environ[\"PYTHONPATH\"])"
 	python3 -m pymavlink.tools.mavgen --lang=C --wire-protocol=$(MAVLINK_VER) --output=mavlink $(MAVLINK_DEFS)/message_definitions/$(MAVLINK_SCHEMA)
 
 mavlink_introspect_gen.c mavlink_introspect_gen.h &: mavlink/ makestructs.py
@@ -45,9 +47,6 @@ mavlink_introspect_gen.c mavlink_introspect_gen.h &: mavlink/ makestructs.py
 	-exec ./makestructs.py \
 	-r mavlink_introspect_gen.h \
 	-p mavlink_introspect_gen.c '{}' + >/dev/null
-
-#pyinterop.cpp: pyinterop.pyx reader.h c_introspect.h mavlink/
-#	python setup.py build
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $< -o $@
