@@ -8,3 +8,4 @@ _gen.c
 /mavlinkreader
 /bin/
 /build/
+*__pycache__
