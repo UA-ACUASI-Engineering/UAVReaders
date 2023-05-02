@@ -130,9 +130,13 @@ cdef object voidToPython(void* ptr, cType t, size_t num):
         for i in range(num):
             l.append(bool((<unsigned char*>ptr)[i]))
     elif t == cType.CHAR:
-        for i in range(num):
+        if num > 1:
             l = ""
-            l = str(<char*>ptr, encoding="utf-8")
+            try:
+                l = str(<char*>ptr, encoding="utf-8")
+            except UnicodeDecodeError:
+                l = chr((<char*>ptr)[0])
+                
     elif t == cType.SIGNED_CHAR:
         for i in range(num):
             l.append(int((<char*>ptr)[i]))
@@ -218,8 +222,8 @@ cdef class packet(dict):
 
     These packets are not meant to be created by users at this time.
     """
-    cdef string name
-    cdef string protocol
+    cdef str name
+    cdef str protocol
     cdef int packet_type
 
     def __cinit__(self):
@@ -234,10 +238,10 @@ cdef class packet(dict):
             k, v = memberToPy(i)
             self[k] = v
 
-        self.protocol = proto
+        self.protocol = str(proto, encoding="utf-8")
         self.packet_type = ptr.getType()
-        print("hi")
         self["__name__"] = cppToPyStr(ptr.getName())
+        self.name = self["__name__"]
         self["__packet_type__"] = self.packet_type
         self["__protocol__"] = cppToPyStr(proto)
 
