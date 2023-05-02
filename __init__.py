@@ -34,10 +34,13 @@ class _add_path():
             pass
 
 def _import_uavreaders():
-    global UAVReaders
+    global mavlink_reader
+    global data_flash_reader
     directory = os.path.dirname(__file__)
     library_directories = glob(directory+"/build/lib*")
     with _add_path(library_directories):
-        import UAVReaders
+        import UAVReaders as u
+        mavlink_reader = u.mavlink_reader
+        data_flash_reader = u.data_flash_reader
 
 _import_uavreaders()
