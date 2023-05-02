@@ -9,7 +9,7 @@
 CFLAGS += -Wall -Wno-address-of-packed-member -g
 LDFLAGS += -g
 
-all: bin/dataflashreader bin/mavlinkreader
+all: bin/dataflashreader bin/mavlinkreader pypackage
 
 export CFLAGS
 export LDFLAGS
