@@ -62,7 +62,7 @@ clean:
 	@rm -rf *_gen.h
 	@rm -rf build
 
-test: bin/mavlinkreader
+test: bin/mavlinkreader bin/dataflashreader
 	./bin/mavlinkreader <./test_data/mavlink_test.bin > __test_mav.out \
 	2>/dev/null
 	if cmp -s __test_mav.out ./test_data/mavlink_test.out ; then \
