@@ -240,10 +240,7 @@ cdef class packet(dict):
 
         self.protocol = str(proto, encoding="utf-8")
         self.packet_type = ptr.getType()
-        self["__name__"] = cppToPyStr(ptr.getName())
-        self.name = self["__name__"]
-        self["__packet_type__"] = self.packet_type
-        self["__protocol__"] = cppToPyStr(proto)
+        self.name = cppToPyStr(ptr.getName())
 
         deleteStruct(ptr)
 
