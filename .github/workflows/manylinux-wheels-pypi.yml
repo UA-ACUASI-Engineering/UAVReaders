@@ -60,12 +60,12 @@ jobs:
         run: |
           make prepare
 
-    - name: Build SDist
-      run: pipx run build --sdist
+      - name: Build SDist
+        run: pipx run build --sdist
 
-    - uses: actions/upload-artifact@v3
-      with:
-        path: dist/*.tar.gz
+      - uses: actions/upload-artifact@v3
+        with:
+          path: dist/*.tar.gz
 
   publish:
     name: Publish packages to test PyPI
