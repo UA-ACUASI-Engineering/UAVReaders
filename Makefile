@@ -1,8 +1,8 @@
-.PHONY: all mavlink dataflash pypackage clean test
+.PHONY: all mavlink dataflash pypackage clean test pywheel prepare
 
 .IGNORE: clean
 
-.INTERMEDIATE: pyinterop.cpp  pyinterop.cpp
+.INTERMEDIATE: pyinterop.cpp
 
 .SILENT: test
 
@@ -11,10 +11,15 @@ LDFLAGS += -g
 
 all: bin/dataflashreader bin/mavlinkreader pypackage
 
+PY_DEPS := mavlink_introspect_gen.c mavlink_introspect_gen.h setup.py pyinterop.cpp
+
 export CFLAGS
 export LDFLAGS
-pypackage pyinterop.cpp&: mavlink_introspect_gen.c mavlink_introspect_gen.h setup.py pyinterop.pyx
+pypackage: $(PY_DEPS)
 	python setup.py build
+
+pywheel: $(PY_DEPS)
+	python -m build
 
 mavlink: bin/mavlinkreader
 
@@ -48,6 +53,9 @@ mavlink_introspect_gen.c mavlink_introspect_gen.h &: mavlink/ makestructs.py
 	-r mavlink_introspect_gen.h \
 	-p mavlink_introspect_gen.c '{}' + >/dev/null
 
+%.cpp: %.pyx
+	cython	--cplus $<
+
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -80,3 +88,4 @@ test: bin/mavlinkreader bin/dataflashreader
 	diff __test_mav.out ./test_data/dataflash_test.out ; \
     fi
 	rm __test_DF.out
+
