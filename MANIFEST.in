@@ -1,0 +1,3 @@
+recursive-include mavlink *.h
+include *.h
+include mavlink_introspect_gen.h

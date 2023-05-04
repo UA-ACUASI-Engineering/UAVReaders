@@ -1,11 +1,37 @@
 # UAVReaders
 Parsers for UAV-related formats like DataFlash and Mavlink
 
-## Usage from Python
+## Installation and Usage
 
-Right now, as this module has not yet been uploaded to PyPI or anything like 
-that, usage is a bit more complicated (hopefully not too complicated, 
-though)! There are a few build-time dependencies that you need to install 
+This package is available from PyPI. You can install it by doing something
+like this: `pip install UAVReaders`.
+
+Currently, prebuilt wheels are available for the majority of Linux 
+distributions and no other operating systems at all. 
+
+### Example
+Here is an example of using `data_flash_reader` in a script.
+
+```python
+import UAVReaders as u 
+
+dfreader = u.data_flash_reader("test_data/dataflash_test.bin")
+
+for packet in dfreader():
+    # do something with the packet, which is a dict containing 
+	# the values of each field in the original packet.
+```
+I would advise you not to keep the packets around for much longer than
+necessary. Do not save them into a Python list, for example; it will probably
+take too much memory if your DataFlash file is large. Expect a 50x memory
+penalty. A 1GB DataFlash file might take up 50GB when each packet
+is simultaneously in memory because of duplicating packet field names.
+
+## Usage from Python by cloning this repository
+
+It is also easy to clone and use this repository as part of a larger project,
+for example by adding it as a git submodule.
+There are a few build-time dependencies that you need to install 
 before building the package.
  - `regex`, install with `conda install regex`
  - `future`, install with `conda install future`
@@ -21,22 +47,6 @@ After that, just `cd` into the directory and run `make pypackage`. Import
 `uavreaders.UAVReaders` to load it into your python. This provides access
 to `UAVReaders.data_flash_reader`, `UAVReaders.mavlink_reader`, and a few
 auxiliary functions not needed during normal usage.
-
-`mavlink_reader` and `data_flash_reader` have the same interface, so I 
-will describe just `data_flash_reader`. Create a `data_flash_reader` object 
-by passing either a file name to read or a Python function thet `yields` bytes. After that, just read packets out of the reader in a loop.
-
-Here is an example.
-
-```python
-import uavreaders.UAVReaders as u
-
-dfreader = u.data_flash_reader("test_data/dataflash_test.bin")
-
-for packet in dfreader():
-    # do something with the packet, which is a dict containing 
-	# the values of each field in the original packet.
-```
 
 ## Commandline Usage
 

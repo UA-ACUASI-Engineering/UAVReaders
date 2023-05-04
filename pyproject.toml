@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools", "cython ~= 0.29.0", "regex", "future"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "UAVReaders"
+version = "0.5.5"
+authors = [
+  {name = "Christian Clifford", email="cjclifford@alaska.edu"},
+]
+description = "Parsers for UAV/Aerial Drone-related formats like MavLink and DataFlash"
+readme = "README.md"
+requires-python = ">=3.7"
