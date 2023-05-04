@@ -43,6 +43,6 @@ jobs:
     - name: upload resulting wheel to github actions
       uses: actions/upload-artifact@v3
       with:
-        name: wheel-${{ matrix.python-version }}.whl
+        name: artifacts-${{ matrix.python-version }}
         path: dist/*.whl
         
