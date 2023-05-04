@@ -2,8 +2,6 @@
 
 .IGNORE: clean
 
-.INTERMEDIATE: pyinterop.cpp
-
 .SILENT: test
 
 CFLAGS += -Wall -Wno-address-of-packed-member -g
@@ -15,10 +13,13 @@ PY_DEPS := mavlink_introspect_gen.c mavlink_introspect_gen.h setup.py pyinterop.
 
 export CFLAGS
 export LDFLAGS
-pypackage: $(PY_DEPS)
+
+prepare: $(PY_DEPS)
+
+pypackage: prepare
 	python setup.py build
 
-pywheel: $(PY_DEPS)
+pywheel: prepare
 	python -m build
 
 mavlink: bin/mavlinkreader
@@ -69,6 +70,9 @@ clean:
 	@rm -rf *_gen.c
 	@rm -rf *_gen.h
 	@rm -rf build
+	@rm -rf pyinterop.cpp
+	@rm -rf dist
+	@rm -rf *.egg*
 
 test: bin/mavlinkreader bin/dataflashreader
 	./bin/mavlinkreader <./test_data/mavlink_test.bin > __test_mav.out \

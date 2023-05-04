@@ -11,3 +11,4 @@ _gen.c
 *__pycache__
 *.egg*
 /dist/
+/pyinterop.cpp
