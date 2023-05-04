@@ -12,6 +12,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
 
       # Used to host cibuildwheel
       - uses: actions/setup-python@v3
@@ -23,7 +25,11 @@ jobs:
           python -m pip install regex
           python -m pip install future
           python -m pip install build
-          python -m pip install cibuildwheel==2.12.3      
+          python -m pip install cibuildwheel==2.12.3
+
+      - name: Prebuild test
+        run: |
+          make test
 
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
