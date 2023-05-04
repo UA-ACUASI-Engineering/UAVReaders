@@ -27,12 +27,12 @@ dataflash: bin/dataflashreader
 
 bin/dataflashreader: dataflashreader.cpp dataflash.o c_introspect.o
 	mkdir -p bin
-	$(CXX) $(CFLAGS) --std=gnu++23 $^ -o bin/dataflashreader
+	$(CXX) $(CFLAGS) $^ -o bin/dataflashreader
 
 
 bin/mavlinkreader: mavlinkreader.cpp mavlink_introspect_gen.o c_introspect.o
 	mkdir -p bin
-	$(CXX) $(CFLAGS) --std=gnu++23 $^ -o bin/mavlinkreader
+	$(CXX) $(CFLAGS) $^ -o bin/mavlinkreader
 
 MAVLINK_DEFS := mavlink_project
 PYMAVLINK := $(MAVLINK_DEFS)/pymavlink
