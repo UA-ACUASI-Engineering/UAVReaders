@@ -55,7 +55,7 @@ mavlink_introspect_gen.c mavlink_introspect_gen.h &: mavlink/ makestructs.py
 	-p mavlink_introspect_gen.c '{}' + >/dev/null
 
 %.cpp: %.pyx
-	cython	--cplus $<
+	cython	--cplus --module-name UAVReaders $<
 
 %.o: %.c %.h
 	$(CC) $(CFLAGS) -c $< -o $@

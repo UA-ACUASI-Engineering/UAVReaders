@@ -1,3 +1,5 @@
+[![Test UAVReaders](https://github.com/UA-ACUASI-Engineering/UAVReaders/actions/workflows/test_uavreaders.yml/badge.svg)](https://github.com/UA-ACUASI-Engineering/UAVReaders/actions/workflows/test_uavreaders.yml)
+
 # UAVReaders
 Parsers for UAV-related formats like DataFlash and Mavlink
 
