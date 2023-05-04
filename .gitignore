@@ -9,5 +9,5 @@ _gen.c
 /bin/
 /build/
 *__pycache__
-*.egg-info
+*.egg*
 /dist/
