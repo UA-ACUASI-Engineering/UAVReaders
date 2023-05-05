@@ -22,8 +22,9 @@ extern "C"{
 
 namespace DataFlash{
 
+#pragma pack(push, 1)
 	extern "C"{
-		struct __attribute__((packed)) DFPacket {
+		struct DFPacket {
 			uint16_t begin;
 			uint8_t packet_type;
 			uint8_t rest[253];
@@ -39,6 +40,7 @@ namespace DataFlash{
 			char labels[LEN_LABELS];
 		};
 	}
+#pragma pack(pop)
 
 	class DFFormatDescription {
 		static bool initialized;
@@ -72,7 +74,7 @@ namespace DataFlash{
 
 			std::queue<char*> fieldNames;
 			fieldNames.push(fields);
-			for (int i = 0; i < LEN_LABELS and fields[i] != 0; i++) {
+			for (int i = 0; i < LEN_LABELS && fields[i] != 0; i++) {
 				if (fields[i] == ',') {
 					fields[i] = 0;
 					fieldNames.push(fields + i + 1);
@@ -82,7 +84,7 @@ namespace DataFlash{
 			description.numMembers = 0;
 			description.name = name;
 			/* intentionally empty */
-			for (; description.numMembers < LEN_FMT_STR and
+			for (; description.numMembers < LEN_FMT_STR &&
 					 format.fmt_string[description.numMembers] != 0;
 				 description.numMembers++);
 			description.members = new cMember[description.numMembers];

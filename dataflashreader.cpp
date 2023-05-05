@@ -25,10 +25,10 @@ int main() {
 	int numPackets = 0;
 	cout << "[\n";
 	bool first = true;
-	while (not cin.eof()) {
+	while (! cin.eof()) {
 		byte = cin.get();
 		if (parser.parseDataFlash(byte, msg)) {
-			if (not first) cout << ",\n";
+			if (! first) cout << ",\n";
 			first = false;
 			numPackets++;
 			uint8_t id = msg.packet_type;
