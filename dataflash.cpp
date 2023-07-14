@@ -1,5 +1,6 @@
 #include <ostream>
 #include <string>
+#include <cstdint>
 #include "dataflash.h"
 #include "table.h"
 
@@ -22,7 +23,7 @@ namespace DataFlash{
 		for (int i = 0; i < current.numMembers; i++){
 			current.members[i] = description.members[i];
 			//bleh
-			long index = (long)description.members[i].value;
+			uint64_t index = (uintptr_t)description.members[i].value;
 			uint8_t * mem = copy.rest;
 			current.members[i].value = (void*)(mem + index);
 			/*				std::cerr << index
@@ -31,7 +32,7 @@ namespace DataFlash{
 							<< std::endl
 							<< current.members[i].value
 							<< std::endl<<std::endl;
-			*/
+			//*/
 			std::cerr.flush();
 		}
 			
@@ -126,17 +127,17 @@ namespace DataFlash{
 			}
 
 			// The parser does not emit format packets, just keeps them for itself.
-			else { 
+			else {
 				packet.rest[this->consumedCount - 3] = byte;
 				const DFDescriptionPacket format = reinterpret_cast<DFDescriptionPacket&>(packet);
 				this->newFormat(format);
-				/*				std::cerr << "defined packet 0x"
+				/*std::cerr << "defined packet 0x"
 						  << std::setfill('0')
 						  << std::setw(2)
 						  << std::hex
 						  <<(int)this->formats[format.type]->packet_type
-						  << std::endl;*/
-									
+						  << std::endl;
+				*/					
 			}
 		}
 		
