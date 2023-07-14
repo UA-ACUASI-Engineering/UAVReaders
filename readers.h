@@ -23,6 +23,7 @@ extern "C"{
 namespace UAVFormatReaders {
 
 	class abstractReader {
+	public:
 		/* Interface for packet Readers */
 		virtual void parseByte(const uint8_t) = 0;
 		virtual void parseBuffer(const uint8_t *, uint64_t) = 0;
@@ -30,6 +31,7 @@ namespace UAVFormatReaders {
 		virtual int bytesSeen() = 0;
 		virtual int  packetsSeen() = 0;
 		virtual introspect::Struct* getPacket() = 0;
+		virtual ~abstractReader() {};
 	};
 	
 	class dataFlashReader: public abstractReader {

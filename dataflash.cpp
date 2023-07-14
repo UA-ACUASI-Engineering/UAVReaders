@@ -1,5 +1,6 @@
 #include <ostream>
 #include <string>
+#include <cstdint>
 #include "dataflash.h"
 #include "table.h"
 
@@ -22,7 +23,7 @@ namespace DataFlash{
 		for (int i = 0; i < current.numMembers; i++){
 			current.members[i] = description.members[i];
 			//bleh
-			long index = (long)description.members[i].value;
+			uint64_t index = (uintptr_t)description.members[i].value;
 			uint8_t * mem = copy.rest;
 			current.members[i].value = (void*)(mem + index);
 			/*				std::cerr << index
@@ -31,7 +32,7 @@ namespace DataFlash{
 							<< std::endl
 							<< current.members[i].value
 							<< std::endl<<std::endl;
-			*/
+			//*/
 			std::cerr.flush();
 		}
 			
@@ -44,7 +45,7 @@ namespace DataFlash{
 	bool DFFormatDescription::initialized = false;
 	cMember DFFormatDescription::dfMemberTypes[256] = {cMember{0,0,0,NONE}};
 	void DFFormatDescription::initialize() {
-		if (not DFFormatDescription::initialized){
+		if (! DFFormatDescription::initialized){
 			DFFormatDescription::initialized = true;
 			DFFormatDescription::dfMemberTypes['B'] = cMember{0, 0, 1, UINT8_T};
 			DFFormatDescription::dfMemberTypes['C'] = cMember{0, 0, 100, UINT16_T};
@@ -83,17 +84,17 @@ namespace DataFlash{
 	}
 	
 	bool DFParser::parseDataFlash(const uint8_t byte, DFPacket& packet) {
-		if (this->consumedCount == 0 and byte == DFParser::headerByte1) {
+		if (this->consumedCount == 0 && byte == DFParser::headerByte1) {
 			this->consumedCount = 1;
 			goto out;
 		}
 
-		else if (this->consumedCount == 1 and byte == DFParser::headerByte2){
+		else if (this->consumedCount == 1 && byte == DFParser::headerByte2){
 			this->consumedCount = 2;
 			goto out;
 		}
 
-		else if (this->consumedCount == 2 and byte == DFParser::idDescriptorPacketByte) {
+		else if (this->consumedCount == 2 && byte == DFParser::idDescriptorPacketByte) {
 			// the packet is a format descriptor
 			this->totalSize = DFParser::idDescriptorPacketLen;
 			this->consumedCount = 3;
@@ -110,33 +111,33 @@ namespace DataFlash{
 			goto out;
 		}
 
-		else if (this->consumedCount >= 3 and this->consumedCount < (this->totalSize-1)) {
+		else if (this->consumedCount >= 3 && this->consumedCount < (this->totalSize-1)) {
 			// Bytes of the packet body
 			packet.rest[this->consumedCount - 3] = byte;
 			this->consumedCount++;
 			goto out;
 		}
 
-		else if (this->consumedCount >= 3 and this->consumedCount == (this->totalSize-1)) {
+		else if (this->consumedCount >= 3 && this->consumedCount == (this->totalSize-1)) {
 			/// Last byte in the packet
-			if (not this->isDescriptor) {
+			if (! this->isDescriptor) {
 				packet.rest[this->consumedCount - 3] = byte;
 				this->zero();
 				return true;
 			}
 
 			// The parser does not emit format packets, just keeps them for itself.
-			else { 
+			else {
 				packet.rest[this->consumedCount - 3] = byte;
 				const DFDescriptionPacket format = reinterpret_cast<DFDescriptionPacket&>(packet);
 				this->newFormat(format);
-				/*				std::cerr << "defined packet 0x"
+				/*std::cerr << "defined packet 0x"
 						  << std::setfill('0')
 						  << std::setw(2)
 						  << std::hex
 						  <<(int)this->formats[format.type]->packet_type
-						  << std::endl;*/
-									
+						  << std::endl;
+				*/					
 			}
 		}
 		

@@ -23,7 +23,6 @@
 #include <type_traits>
 #include <vector>
 #include <map>
-#include <any>
 
 #include <iostream>
 
@@ -39,6 +38,7 @@ namespace introspect {
 		/* Interface for things that can be turned into json */
 	public:
 		virtual std::string to_json() = 0;
+		virtual ~abstractToJson() {};
 	};
 
 	class abstractStructMember: public abstractToJson {
@@ -61,7 +61,6 @@ namespace introspect {
 	public:
 		using type = T;
 		structMember(const cMember member):
-			abstractStructMember(),
 			name(member.name),
 			elements(),
 			count(member.elements),
@@ -89,7 +88,7 @@ namespace introspect {
 		int mavType;
 	public:
 		int getNumChildren() {return elements.size();}
-		int getType() {return mavType;}
+		uint8_t getType() {return mavType;}
 		std::string& getName() {return this->name;}
 		auto begin() {return this->elements.begin();}
 		auto end() {return this->elements.end();}
