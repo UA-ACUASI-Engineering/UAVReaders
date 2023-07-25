@@ -11,6 +11,7 @@
 #include <cstdint>
 #include <queue>
 #include <cstring>
+#include <iostream>
 
 extern "C"{
 #include "table.h"
@@ -30,7 +31,7 @@ namespace DataFlash{
 			uint8_t rest[253];
 		};
 
-		struct __attribute__((packed)) DFDescriptionPacket{
+		struct DFDescriptionPacket{
 			uint16_t begin;
 			uint8_t packet_type;
 			uint8_t type;
@@ -83,6 +84,7 @@ namespace DataFlash{
  
 			description.numMembers = 0;
 			description.name = name;
+			std::cerr << name << " ->\n";
 			/* intentionally empty */
 			for (; description.numMembers < LEN_FMT_STR &&
 					 format.fmt_string[description.numMembers] != 0;
