@@ -85,7 +85,6 @@ namespace DataFlash{
  
 			description.numMembers = 0;
 			description.name = name;
-			std::cerr << name << " ->\n";
 			/* intentionally empty */
 			for (; description.numMembers < LEN_FMT_STR &&
 					 format.fmt_string[description.numMembers] != 0;
