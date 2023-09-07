@@ -5,6 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "UAVReaders"
 version = "1.0.2"
+
 authors = [
   {name = "Christian Clifford", email="cjclifford@alaska.edu"},
 ]
