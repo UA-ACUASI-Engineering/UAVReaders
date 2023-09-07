@@ -4,7 +4,7 @@
 
 .SILENT: test
 
-CFLAGS += -Wall -Wno-address-of-packed-member -g -O4
+CFLAGS += -Wall -Wno-address-of-packed-member -O4
 LDFLAGS += -g
 
 all: bin/dataflashreader bin/mavlinkreader pypackage
