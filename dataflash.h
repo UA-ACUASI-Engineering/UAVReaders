@@ -47,6 +47,7 @@ namespace DataFlash{
 		static bool initialized;
 		static void initialize();
 		static cMember dfMemberTypes[256];
+		static char defaultName[10]; 
 		char name[LEN_NAME + 1];
 		char fields[LEN_LABELS + 1];
 
@@ -99,6 +100,7 @@ namespace DataFlash{
 				description.members[i].name = fieldNames.front();
 				description.members[i].value = (void*)offset;
 				fieldNames.pop();
+				if (fieldNames.size() < 1) fieldNames.push(DFFormatDescription::defaultName);
 				offset += cTypeSize[description.members[i].type];
 			}
 			current.members = nullptr;
@@ -111,7 +113,7 @@ namespace DataFlash{
 				delete[] current.members;
 			}
 		}
-
+		const std::string getName() {return std::string(this->name); }
 		const cStruct& format(DFPacket& packet);
 		void releaseFormat();
 	};
@@ -159,6 +161,7 @@ namespace DataFlash{
 		void releaseCStuctFormatter();
 		void newFormat(const DFDescriptionPacket& packet);
 		bool formatExists(uint8_t byte);
+		std::string formatName(uint8_t byte);
 	};
 
 }
