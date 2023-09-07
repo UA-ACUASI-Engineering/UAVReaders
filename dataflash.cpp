@@ -48,8 +48,8 @@ namespace DataFlash{
 		if (! DFFormatDescription::initialized){
 			DFFormatDescription::initialized = true;
 			DFFormatDescription::dfMemberTypes['B'] = cMember{0, 0, 1, UINT8_T};
-			DFFormatDescription::dfMemberTypes['C'] = cMember{0, 0, 100, UINT16_T};
-			DFFormatDescription::dfMemberTypes['E'] = cMember{0, 0, 100, UINT32_T};
+			DFFormatDescription::dfMemberTypes['C'] = cMember{0, 0, 1, UINT16_T};
+			DFFormatDescription::dfMemberTypes['E'] = cMember{0, 0, 1, UINT32_T};
 			DFFormatDescription::dfMemberTypes['H'] = cMember{0, 0, 1, UINT16_T};
 			DFFormatDescription::dfMemberTypes['I'] = cMember{0, 0, 1, UINT32_T};
 			DFFormatDescription::dfMemberTypes['L'] = cMember{0, 0, 1, INT32_T};
@@ -59,9 +59,9 @@ namespace DataFlash{
 			DFFormatDescription::dfMemberTypes['Z'] = cMember{0, 0, 64, CHAR};
 			DFFormatDescription::dfMemberTypes['a'] = cMember{0, 0, 32, INT16_T};
 			DFFormatDescription::dfMemberTypes['b'] = cMember{0, 0, 1, INT8_T};
-			DFFormatDescription::dfMemberTypes['c'] = cMember{0, 0, 100, INT16_T};
+			DFFormatDescription::dfMemberTypes['c'] = cMember{0, 0, 1, INT16_T};
 			DFFormatDescription::dfMemberTypes['d'] = cMember{0, 0, 1, DOUBLE};
-			DFFormatDescription::dfMemberTypes['e'] = cMember{0, 0, 100, INT32_T};
+			DFFormatDescription::dfMemberTypes['e'] = cMember{0, 0, 1, INT32_T};
 			DFFormatDescription::dfMemberTypes['f'] = cMember{0, 0, 1, FLOAT};
 			DFFormatDescription::dfMemberTypes['h'] = cMember{0, 0, 1, INT16_T};
 			DFFormatDescription::dfMemberTypes['i'] = cMember{0, 0, 1, INT32_T};
@@ -74,13 +74,17 @@ namespace DataFlash{
 	const uint8_t DFParser::headerByte2 = 0x95;
 	const uint8_t DFParser::idDescriptorPacketByte = 0x80;
 	const uint8_t DFParser::idDescriptorPacketLen = 0x59;
-
+	char DFFormatDescription::defaultName[10] = "no name";
+ 
 	void DFParser::newFormat(const DFDescriptionPacket& packet) {
 		uint8_t type = packet.type;
+		if (! ( packet.name && packet.fmt_string && packet.labels))
+			return;
 		if (this->formats[type] != nullptr) 
 			delete formats[type];
 		this->formats[type] = new DFFormatDescription(packet);
 		this->packetLengths[packet.type] = packet.len;
+		return;
 	}
 	
 	bool DFParser::parseDataFlash(const uint8_t byte, DFPacket& packet) {
@@ -131,13 +135,13 @@ namespace DataFlash{
 				packet.rest[this->consumedCount - 3] = byte;
 				const DFDescriptionPacket format = reinterpret_cast<DFDescriptionPacket&>(packet);
 				this->newFormat(format);
-				/*std::cerr << "defined packet 0x"
+				std::cerr << "defined packet 0x"
 						  << std::setfill('0')
 						  << std::setw(2)
 						  << std::hex
 						  <<(int)this->formats[format.type]->packet_type
 						  << std::endl;
-				*/					
+				
 			}
 		}
 		
@@ -156,5 +160,8 @@ namespace DataFlash{
 
 	bool DFParser::formatExists(uint8_t byte) {
 		return this->formats[byte] != nullptr;
+	}
+	std::string DFParser::formatName(uint8_t byte){
+		return this->formats[byte]->getName();
 	}
 }

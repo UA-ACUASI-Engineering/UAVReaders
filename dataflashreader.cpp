@@ -25,6 +25,7 @@ int main() {
 	int numPackets = 0;
 	cout << "[\n";
 	bool first = true;
+	cStruct cRecord = {nullptr, nullptr, 0, 0};
 	while (! cin.eof()) {
 		byte = cin.get();
 		if (parser.parseDataFlash(byte, msg)) {
@@ -33,14 +34,21 @@ int main() {
 			numPackets++;
 			uint8_t id = msg.packet_type;
 			if (parser.formatExists(id)){
-				cerr << "Msg 0x"
+				/*cerr << "Msg 0x"
 					 << setfill('0')
 					 << setw(2)
 					 << std::hex
 					 << (int)id
+					 <<  " " << parser.formatName(id)
 					 << " received"
-					 << endl;
-				cStruct cRecord = parser.getIntrospectiveStruct(msg);
+					 << endl;*/
+				try {
+					cRecord = parser.getIntrospectiveStruct(msg);
+				}
+				catch (const std::logic_error&){
+					cerr << "Packet is invalid";
+					continue;
+				}
 				introspect::Struct record = introspect::Struct(&cRecord);
 				
 				cout << record.to_json();
