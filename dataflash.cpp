@@ -135,12 +135,12 @@ namespace DataFlash{
 				packet.rest[this->consumedCount - 3] = byte;
 				const DFDescriptionPacket format = reinterpret_cast<DFDescriptionPacket&>(packet);
 				this->newFormat(format);
-				std::cerr << "defined packet 0x"
+				/*std::cerr << "defined packet 0x"
 						  << std::setfill('0')
 						  << std::setw(2)
 						  << std::hex
 						  <<(int)this->formats[format.type]->packet_type
-						  << std::endl;
+						  << std::endl;*/
 				
 			}
 		}
