@@ -20,7 +20,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         submodules: 'recursive'
-        token: ${{ vars.GITHUB_TOKEN_STUPID }}
+        token: ${{ vars.G_TOKEN_STUPID }}
 
     - name: Setup Miniconda
       uses: conda-incubator/setup-miniconda@v2
