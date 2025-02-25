@@ -92,14 +92,13 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: artifact
+          name: wheel-${{ matrix.python }}-${{ matrix.platform }}
           path: dist
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@v1.5.0
         with:
           user: __token__
-          name: wheel-${{ matrix.python }}-${{ matrix.platform }}
           password: ${{ secrets.PYPI_API_TOKEN }}
   publish_sdist:
     name: Publish sdist to PyPI
@@ -118,5 +117,4 @@ jobs:
         uses: pypa/gh-action-pypi-publish@v1.5.0
         with:
           user: __token__
-          name: wheel-${{ matrix.python }}-${{ matrix.platform }}
           password: ${{ secrets.PYPI_API_TOKEN }}
