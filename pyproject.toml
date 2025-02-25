@@ -11,4 +11,7 @@ authors = [
 ]
 description = "Parsers for UAV/Aerial Drone-related formats like MavLink and DataFlash"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.8"
+
+[tool.cibuildwheel]
+skip = "pp*"
