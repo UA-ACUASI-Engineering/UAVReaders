@@ -37,7 +37,7 @@ jobs:
 
       - name: Build wheels
         #run: python -m cibuildwheel --output-dir wheelhouse
-        uses: pypa/cibuildwheel@v2.16.5
+        uses: pypa/cibuildwheel@v2.22
         # to supply options, put them in 'env', like:
         # env:
         #   CIBW_SOME_OPTION: value
