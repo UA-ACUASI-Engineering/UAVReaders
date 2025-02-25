@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "cython ~= 0.29.0", "regex", "future"]
+requires = ["setuptools", "cython ~= 0.29.0", "regex"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -11,4 +11,4 @@ authors = [
 ]
 description = "Parsers for UAV/Aerial Drone-related formats like MavLink and DataFlash"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
