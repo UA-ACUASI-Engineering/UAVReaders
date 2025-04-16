@@ -22,7 +22,7 @@ ext_modules = [
 setup(
     ext_modules = cythonize(ext_modules),
     name="UAVReaders",
-    version="1.0.5",
+    version="1.0.6",
     author="Christian Clifford",
     author_email="cjclifford@alaska.edu",
     description="Parsers for UAV/Aerial Drone-related formats like MavLink and DataFlash",
