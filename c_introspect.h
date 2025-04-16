@@ -90,9 +90,9 @@ namespace introspect {
 		int getNumChildren() {return elements.size();}
 		uint8_t getType() {return mavType;}
 		std::string& getName() {return this->name;}
-		auto begin() {return this->elements.begin();}
-		auto end() {return this->elements.end();}
-		auto innerVector() {return elements;}
+		std::vector<abstractStructMember*>::iterator begin() {return this->elements.begin();}
+		std::vector<abstractStructMember*>::iterator end() {return this->elements.end();}
+		std::vector<abstractStructMember*>& innerVector() {return elements;}
 		Struct(const cStruct * s):
 			name(s->name),
 			elements(),
