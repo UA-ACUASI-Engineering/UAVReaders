@@ -67,7 +67,7 @@ jobs:
       - name: actually build it
         uses: pypa/cibuildwheel@v2.23.2
         with:
-          package-dir: artifact/
+          package-dir: sdist.tar.gz
           output-dir: wheelhouse
       - name: Save wheel
         uses: actions/upload-artifact@v4
