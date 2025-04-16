@@ -43,30 +43,30 @@ namespace DataFlash{
 	}
 
 	bool DFFormatDescription::initialized = false;
-	cMember DFFormatDescription::dfMemberTypes[256] = {cMember({0,0,0,NONE})};
+	cMember DFFormatDescription::dfMemberTypes[256] = {(cMember){0,0,0,NONE}};
 	void DFFormatDescription::initialize() {
 		if (! DFFormatDescription::initialized){
 			DFFormatDescription::initialized = true;
-			DFFormatDescription::dfMemberTypes['B'] = cMember({0, 0, 1, UINT8_T});
-			DFFormatDescription::dfMemberTypes['C'] = cMember({0, 0, 1, UINT16_T});
-			DFFormatDescription::dfMemberTypes['E'] = cMember({0, 0, 1, UINT32_T});
-			DFFormatDescription::dfMemberTypes['H'] = cMember({0, 0, 1, UINT16_T});
-			DFFormatDescription::dfMemberTypes['I'] = cMember({0, 0, 1, UINT32_T});
-			DFFormatDescription::dfMemberTypes['L'] = cMember({0, 0, 1, INT32_T});
-			DFFormatDescription::dfMemberTypes['M'] = cMember({0, 0, 1, UINT8_T});
-			DFFormatDescription::dfMemberTypes['N'] = cMember({0, 0, 16, CHAR});
-			DFFormatDescription::dfMemberTypes['Q'] = cMember({0, 0, 1, UINT64_T});
-			DFFormatDescription::dfMemberTypes['Z'] = cMember({0, 0, 64, CHAR});
-			DFFormatDescription::dfMemberTypes['a'] = cMember({0, 0, 32, INT16_T});
-			DFFormatDescription::dfMemberTypes['b'] = cMember({0, 0, 1, INT8_T});
-			DFFormatDescription::dfMemberTypes['c'] = cMember({0, 0, 1, INT16_T});
-			DFFormatDescription::dfMemberTypes['d'] = cMember({0, 0, 1, DOUBLE});
-			DFFormatDescription::dfMemberTypes['e'] = cMember({0, 0, 1, INT32_T});
-			DFFormatDescription::dfMemberTypes['f'] = cMember({0, 0, 1, FLOAT});
-			DFFormatDescription::dfMemberTypes['h'] = cMember({0, 0, 1, INT16_T});
-			DFFormatDescription::dfMemberTypes['i'] = cMember({0, 0, 1, INT32_T});
-			DFFormatDescription::dfMemberTypes['n'] = cMember({0, 0, 4, CHAR});
-			DFFormatDescription::dfMemberTypes['q'] = cMember({0, 0, 1, INT64_T});
+			DFFormatDescription::dfMemberTypes['B'] = (cMember){0, 0, 1, UINT8_T};
+			DFFormatDescription::dfMemberTypes['C'] = (cMember){0, 0, 1, UINT16_T};
+			DFFormatDescription::dfMemberTypes['E'] = (cMember){0, 0, 1, UINT32_T};
+			DFFormatDescription::dfMemberTypes['H'] = (cMember){0, 0, 1, UINT16_T};
+			DFFormatDescription::dfMemberTypes['I'] = (cMember){0, 0, 1, UINT32_T};
+			DFFormatDescription::dfMemberTypes['L'] = (cMember){0, 0, 1, INT32_T};
+			DFFormatDescription::dfMemberTypes['M'] = (cMember){0, 0, 1, UINT8_T};
+			DFFormatDescription::dfMemberTypes['N'] = (cMember){0, 0, 16, CHAR};
+			DFFormatDescription::dfMemberTypes['Q'] = (cMember){0, 0, 1, UINT64_T};
+			DFFormatDescription::dfMemberTypes['Z'] = (cMember){0, 0, 64, CHAR};
+			DFFormatDescription::dfMemberTypes['a'] = (cMember){0, 0, 32, INT16_T};
+			DFFormatDescription::dfMemberTypes['b'] = (cMember){0, 0, 1, INT8_T};
+			DFFormatDescription::dfMemberTypes['c'] = (cMember){0, 0, 1, INT16_T};
+			DFFormatDescription::dfMemberTypes['d'] = (cMember){0, 0, 1, DOUBLE};
+			DFFormatDescription::dfMemberTypes['e'] = (cMember){0, 0, 1, INT32_T};
+			DFFormatDescription::dfMemberTypes['f'] = (cMember){0, 0, 1, FLOAT};
+			DFFormatDescription::dfMemberTypes['h'] = (cMember){0, 0, 1, INT16_T};
+			DFFormatDescription::dfMemberTypes['i'] = (cMember){0, 0, 1, INT32_T};
+			DFFormatDescription::dfMemberTypes['n'] = (cMember){0, 0, 4, CHAR};
+			DFFormatDescription::dfMemberTypes['q'] = (cMember){0, 0, 1, INT64_T};
 		}
 	}
 
