@@ -42,15 +42,16 @@ jobs:
           - ubuntu-latest
           - windows-latest          
           - macos-latest
-        python: [cp38, cp39, cp310, cp311, cp312, cp313]
     needs:
       - make_sdist
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: sdist
-          path: sdist.tar.gz
+          path: artifact
       - uses: actions/setup-python@v4
+      - run: mv artifact/* ./sdist.tar.gz
+      - run: ls -R
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -69,7 +70,6 @@ jobs:
         with:
           name: wheel-${{ matrix.python }}-${{ matrix.platform }}
           path: ./wheelhouse/*.whl
-
 
   publish_wheels:
     name: Publish Wheels to PyPI

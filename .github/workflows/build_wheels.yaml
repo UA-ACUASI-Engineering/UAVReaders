@@ -45,7 +45,6 @@ jobs:
           - ubuntu-latest
           - windows-latest          
           - macos-latest
-        python: [cp38, cp39, cp310, cp311, cp312, cp313]
     needs:
       - make_sdist
     steps:
