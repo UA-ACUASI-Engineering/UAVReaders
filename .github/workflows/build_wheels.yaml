@@ -54,6 +54,7 @@ jobs:
           name: sdist
           path: sdist.tar.gz
       - uses: actions/setup-python@v4
+      - run: ls -R
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
