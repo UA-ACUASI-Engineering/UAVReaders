@@ -1,6 +1,8 @@
 from distutils.core import setup, Extension
 from Cython.Build import cythonize
 from glob import glob
+import sys
+plt = sys.platform
 
 cppfiles = glob("./*.cpp")
 cfiles = glob("./*.c")
@@ -13,6 +15,7 @@ ext_modules = [
     Extension (
         "UAVReaders",
         sources=["pyinterop.cpp"] + extrafiles
+        extra_compile_args=['/std:c++20' if plt=='win32' else '-std=c++20']
     )
 ]
 
