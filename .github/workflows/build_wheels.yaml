@@ -1,0 +1,70 @@
+name: Build wheels
+
+on:
+  pull_request:
+    branches:
+      - master
+jobs:
+  make_sdist:
+    name: Make SDist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive
+          token: ${{ secrets.ADDITIONAL_TOKEN }}
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install regex
+
+      - name: Prepare for build
+        run: |
+          make prepare
+
+      - name: Build SDist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdist
+          path: dist/*.tar.gz
+
+  build_wheels:
+    name: Build wheels using the sdist
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest          
+          - macos-latest
+        python: [cp38, cp39, cp310, cp311, cp312, cp313]
+    needs:
+      - make_sdist
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdist
+          path: sdist.tar.gz
+      - uses: actions/setup-python@v4
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install cython
+          python -m pip install regex
+          python -m pip install future
+          python -m pip install build
+          python -m pip install cibuildwheel==2.12.3
+      - name: actually build it
+        uses: pypa/cibuildwheel@v2.23.2
+        with:
+          package-dir: sdist.tar.gz
+          output-dir: wheelhouse
+      - name: Save wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: wheel-${{ matrix.python }}-${{ matrix.platform }}
+          path: ./wheelhouse/*.whl
