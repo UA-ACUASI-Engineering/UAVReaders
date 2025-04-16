@@ -14,7 +14,7 @@ extrafiles = [x for x in cppfiles + cfiles if x not in exclude]
 ext_modules = [
     Extension (
         "UAVReaders",
-        sources=["pyinterop.cpp"] + extrafiles
+        sources=["pyinterop.cpp"] + extrafiles,
         extra_compile_args=['/std:c++20' if plt=='win32' else '-std=c++20']
     )
 ]
