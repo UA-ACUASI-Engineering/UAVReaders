@@ -68,7 +68,7 @@ jobs:
       - name: Save wheel
         uses: actions/upload-artifact@v4
         with:
-          name: wheel-${{ matrix.python }}-${{ matrix.os }}
+          name: wheels-${{ matrix.os }}
           path: ./wheelhouse/*.whl
 
   publish_wheels:
@@ -82,7 +82,17 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: wheel-${{ matrix.python }}-${{ matrix.os }}
+          name: wheels-ubuntu-latest
+          path: dist
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels-windows-latest
+          path: dist
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels-macos-latest
           path: dist
 
       - name: Publish to PyPI
