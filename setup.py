@@ -15,7 +15,7 @@ ext_modules = [
     Extension (
         "UAVReaders",
         sources=["pyinterop.cpp"] + extrafiles,
-        extra_compile_args=['/std:c++20' if plt=='win32' else '']
+        extra_compile_args=(['/std:c++20'] if plt=='win32' else [])
     )
 ]
 
