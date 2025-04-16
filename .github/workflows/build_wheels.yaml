@@ -45,6 +45,7 @@ jobs:
           - ubuntu-latest
           - windows-latest          
           - macos-latest
+        python: [cp38, cp39, cp310, cp311, cp312, cp313]
     needs:
       - make_sdist
     steps:
@@ -68,6 +69,8 @@ jobs:
         with:
           package-dir: sdist.tar.gz
           output-dir: wheelhouse
+        env:
+          CIBW_BUILD: ${{ matrix.python }}-*
       - name: Save wheel
         uses: actions/upload-artifact@v4
         with:
