@@ -54,6 +54,7 @@ jobs:
           name: sdist
           path: artifact
       - uses: actions/setup-python@v4
+      - run: mv artifact/* ./sdist.tar.gz
       - run: ls -R
       - name: Install Dependencies
         run: |
@@ -64,7 +65,10 @@ jobs:
           python -m pip install build
           python -m pip install cibuildwheel==2.12.3
       - name: actually build it
-        run: python -m cibuildwheel --output-dir wheelhouse artifacts/*
+        uses: pypa/cibuildwheel@v2.23.2
+        with:
+          package-dir: artifact/
+          output-dir: wheelhouse
       - name: Save wheel
         uses: actions/upload-artifact@v4
         with:
